@@ -21,15 +21,15 @@ export function getMaxScore() {
 export function scoreAssessment(
   input: Pick<AssessmentSubmissionInput, "numericScores" | "yesNoAssessments">
 ): ScoringResult {
-  const numericScore = Object.values(input.numericScores).reduce(
-    (sum, value) => sum + (typeof value === "number" ? value : 0),
-    0
-  );
+ const numericScore = Object.values(input.numericScores).reduce<number>(
+  (sum, value) => sum + (typeof value === "number" ? value : 0),
+  0
+);
 
-  const yesNoScore = Object.values(input.yesNoAssessments).reduce(
-    (sum, value) => sum + (value === "Yes" ? 1 : 0),
-    0
-  );
+const yesNoScore = Object.values(input.yesNoAssessments).reduce<number>(
+  (sum, value) => sum + (value === "Yes" ? 1 : 0),
+  0
+);
 
   return {
     numericScore,
