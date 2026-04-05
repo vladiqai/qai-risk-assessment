@@ -599,7 +599,7 @@ function ScoredSection({
 }: {
   title: string;
   description: string;
-  questions: Array<{ id: string; label: string }>;
+questions: ReadonlyArray<{ id: string; label: string }>;  
   values: Record<string, number | null>;
   notes: Record<string, string>;
   onScoreChange: (questionId: string, value: string) => void;
@@ -666,7 +666,7 @@ function YesNoSection({
 }: {
   title: string;
   description: string;
-  questions: Array<{ id: string; label: string }>;
+  questions: ReadonlyArray<{ id: string; label: string }>;
   values: Record<string, "Yes" | "No" | null>;
   notes: Record<string, string>;
   onChange: (questionId: string, value: "Yes" | "No") => void;
