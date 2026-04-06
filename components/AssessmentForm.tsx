@@ -699,6 +699,10 @@ function YesNoSection({
                 <td>{question.label}</td>
               <td className="yes-no-cell">
   <div className="yes-no-group">
+   <td className="yes-no-cell">
+  <fieldset className="yes-no-group">
+    <legend className="sr-only">{question.label}</legend>
+
     <label className="inline-choice">
       <input
         type="radio"
@@ -718,7 +722,7 @@ function YesNoSection({
       />
       <span>No</span>
     </label>
-  </div>
+  </fieldset>
 </td>
                 <td>
                   <textarea
