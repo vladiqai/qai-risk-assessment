@@ -7,17 +7,26 @@ import { assessmentSubmissionSchema } from "@/lib/validation";
 export const runtime = "nodejs";
 export const maxDuration = 30;
 
+function getMissingEnv(names: string[]) {
+  return names.filter((name) => !process.env[name]);
+}
+
+function getErrorMessage(error: unknown) {
+  if (error instanceof Error) return error.message;
+  return "Unknown error";
+}
+
 export async function POST(request: NextRequest) {
   try {
     const json = await request.json();
-    const parsed = assessmentSubmissionSchema.safeParse(json);
 
+    const parsed = assessmentSubmissionSchema.safeParse(json);
     if (!parsed.success) {
       return NextResponse.json(
         {
           ok: false,
           error: "Validation failed",
-          issues: parsed.error.flatten()
+          issues: parsed.error.flatten(),
         },
         { status: 400 }
       );
@@ -27,7 +36,23 @@ export async function POST(request: NextRequest) {
     const scoring = scoreAssessment(payload);
     const fitBand = getFitBand(scoring.totalScore);
 
+    const missingSupabaseEnv = getMissingEnv([
+      "SUPABASE_URL",
+      "SUPABASE_SERVICE_ROLE_KEY",
+    ]);
+
+    if (missingSupabaseEnv.length > 0) {
+      return NextResponse.json(
+        {
+          ok: false,
+          error: `Missing server env: ${missingSupabaseEnv.join(", ")}`,
+        },
+        { status: 500 }
+      );
+    }
+
     const supabase = getSupabaseAdmin();
+
     const sourceUrl =
       request.headers.get("origin") ??
       request.headers.get("referer") ??
@@ -56,13 +81,13 @@ export async function POST(request: NextRequest) {
         biggest_unanswered_question: payload.biggestUnansweredQuestion,
         answers: {
           numericScores: payload.numericScores,
-          yesNoAssessments: payload.yesNoAssessments
+          yesNoAssessments: payload.yesNoAssessments,
         },
         notes: payload.notes,
         poc_gates: payload.pocGates,
         source_url: sourceUrl,
         user_agent: request.headers.get("user-agent"),
-        partner_token: payload.partnerToken
+        partner_token: payload.partnerToken,
       })
       .select("id, created_at")
       .single();
@@ -70,29 +95,54 @@ export async function POST(request: NextRequest) {
     if (error) {
       console.error("Supabase insert failed", error);
       return NextResponse.json(
-        { ok: false, error: "Failed to store submission" },
+        {
+          ok: false,
+          error: `Failed to store submission: ${error.message}`,
+        },
         { status: 500 }
       );
     }
 
-    await sendAssessmentEmails({
-      submissionId: data.id,
-      submittedAt: data.created_at,
-      payload,
-      scoring,
-      fitBand
-    });
+    let emailWarning: string | null = null;
+
+    const missingEmailEnv = getMissingEnv([
+      "RESEND_API_KEY",
+      "QAI_RESULTS_EMAIL",
+      "FROM_EMAIL",
+    ]);
+
+    if (missingEmailEnv.length === 0) {
+      try {
+        await sendAssessmentEmails({
+          submissionId: data.id,
+          submittedAt: data.created_at,
+          payload,
+          scoring,
+          fitBand,
+        });
+      } catch (emailError) {
+        console.error("Assessment emails failed", emailError);
+        emailWarning = `Stored successfully, but emails failed: ${getErrorMessage(emailError)}`;
+      }
+    } else {
+      emailWarning = `Stored successfully, but email env is missing: ${missingEmailEnv.join(", ")}`;
+    }
 
     return NextResponse.json({
       ok: true,
       submissionId: data.id,
       totalScore: scoring.totalScore,
-      fitBand
+      fitBand,
+      emailWarning,
     });
   } catch (error) {
     console.error("Submission route failed", error);
+
     return NextResponse.json(
-      { ok: false, error: "Unexpected server error" },
+      {
+        ok: false,
+        error: `Unexpected server error: ${getErrorMessage(error)}`,
+      },
       { status: 500 }
     );
   }
