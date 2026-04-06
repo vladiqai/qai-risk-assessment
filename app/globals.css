@@ -162,6 +162,7 @@ a { color: inherit; text-decoration: none; }
 
 .grid.two-up {
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
 }
 
 .field {
@@ -194,7 +195,7 @@ textarea {
 }
 
 select[multiple].multi-select {
-  min-height: 170px;
+  min-height: 120px;
 }
 
 small {
