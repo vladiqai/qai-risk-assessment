@@ -230,15 +230,23 @@ small {
 }
 
 .yes-no-cell {
-  min-width: 180px;
+  min-width: 220px;
+}
+
+.yes-no-group {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: nowrap;
 }
 
 .inline-choice {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  margin-right: 16px;
+  margin-right: 0;
   font-weight: 500;
+  white-space: nowrap;
 }
 
 .summary-grid {
