@@ -289,12 +289,13 @@ export function AssessmentForm() {
           </label>
 
           <label className="field">
-            <span>Country / region</span>
-            <input
-              value={form.countryRegion}
-              onChange={(event) => updateField("countryRegion", event.target.value)}
-            />
-          </label>
+  <span>Country / region</span>
+  <input
+    placeholder="Type your country or region"
+    value={form.countryRegion}
+    onChange={(event) => updateField("countryRegion", event.target.value)}
+  />
+</label>
         </div>
 
         <div className="grid two-up">
