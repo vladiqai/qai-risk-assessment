@@ -202,9 +202,11 @@ export function AssessmentForm() {
       }
 
       setSubmissionId(result.submissionId);
-      setSubmitMessage(
-        "Assessment submitted successfully. QAi has received the results."
-      );
+setSubmitMessage(
+  result.emailWarning
+    ? `Assessment submitted successfully.\n${result.emailWarning}`
+    : "Assessment submitted successfully.\nQAi has received the results."
+);
       trackAssessmentEvent("assessment_submitted", {
         totalScore: result.totalScore,
         fitBand: result.fitBand?.label ?? fitBand.label
