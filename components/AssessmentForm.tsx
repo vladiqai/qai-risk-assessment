@@ -695,26 +695,29 @@ function YesNoSection({
             {questions.map((question) => (
               <tr key={question.id}>
                 <td>{question.label}</td>
-                <td className="yes-no-cell">
-                  <label className="inline-choice">
-                    <input
-                      type="radio"
-                      name={question.id}
-                      checked={values[question.id] === "Yes"}
-                      onChange={() => onChange(question.id, "Yes")}
-                    />
-                    Yes
-                  </label>
-                  <label className="inline-choice">
-                    <input
-                      type="radio"
-                      name={question.id}
-                      checked={values[question.id] === "No"}
-                      onChange={() => onChange(question.id, "No")}
-                    />
-                    No
-                  </label>
-                </td>
+              <td className="yes-no-cell">
+  <div className="yes-no-group">
+    <label className="inline-choice">
+      <input
+        type="radio"
+        name={question.id}
+        checked={values[question.id] === "Yes"}
+        onChange={() => onChange(question.id, "Yes")}
+      />
+      <span>Yes</span>
+    </label>
+
+    <label className="inline-choice">
+      <input
+        type="radio"
+        name={question.id}
+        checked={values[question.id] === "No"}
+        onChange={() => onChange(question.id, "No")}
+      />
+      <span>No</span>
+    </label>
+  </div>
+</td>
                 <td>
                   <textarea
                     value={notes[question.id] ?? ""}
