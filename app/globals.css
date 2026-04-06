@@ -230,22 +230,35 @@ small {
 }
 
 .yes-no-cell {
-  min-width: 220px;
+  min-width: 260px;
 }
 
 .yes-no-group {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(2, max-content);
   align-items: center;
-  gap: 24px;
-  flex-wrap: nowrap;
+  column-gap: 28px;
+  row-gap: 8px;
+  justify-content: start;
 }
 
 .inline-choice {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  margin-right: 0;
+  gap: 8px;
+  margin: 0;
   font-weight: 500;
+  white-space: nowrap;
+  line-height: 1.2;
+}
+
+.inline-choice input[type="radio"] {
+  margin: 0;
+  flex: 0 0 auto;
+}
+
+.inline-choice span {
+  display: inline-block;
   white-space: nowrap;
 }
 
@@ -405,16 +418,57 @@ small {
 }
 
 @media print {
-  body { background: white; }
-  .page-shell { max-width: none; padding: 0; }
+  body {
+    background: white;
+  }
+
+  .page-shell {
+    max-width: none;
+    padding: 0;
+  }
+
   .card,
   .hero-card {
     box-shadow: none;
     break-inside: avoid;
   }
+
   .toolbar-card,
   button,
   .button {
     display: none !important;
+  }
+
+  /* 🔧 Fix Yes/No overlap in PDF */
+  .yes-no-cell {
+    min-width: 280px;
+  }
+
+  .yes-no-group {
+    display: grid;
+    grid-template-columns: repeat(2, max-content);
+    column-gap: 32px;
+    row-gap: 8px;
+    justify-content: start;
+  }
+
+  .inline-choice {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    font-weight: 500;
+    white-space: nowrap;
+    line-height: 1.2;
+  }
+
+  .inline-choice input[type="radio"] {
+    margin: 0;
+    flex: 0 0 auto;
+  }
+
+  .inline-choice span {
+    display: inline-block;
+    white-space: nowrap;
   }
 }
